@@ -1,0 +1,32 @@
+Arguments: 
+  /home/dhannyphantom/.nvm/versions/node/v18.12.1/bin/node /home/dhannyphantom/.node/corepack/yarn/1.22.19/bin/yarn.js add --dev hardhat
+
+PATH: 
+  /home/dhannyphantom/.vscode-server/bin/8fa188b2b301d36553cbc9ce1b0a146ccb93351f/bin/remote-cli:/home/dhannyphantom/.nvm/versions/node/v18.12.1/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/usr/lib/wsl/lib:/mnt/c/Program Files/Common Files/Oracle/Java/javapath:/mnt/c/Program Files (x86)/NVIDIA Corporation/PhysX/Common:/mnt/c/Windows/system32:/mnt/c/Windows:/mnt/c/Windows/System32/Wbem:/mnt/c/Windows/System32/WindowsPowerShell/v1.0/:/mnt/c/Windows/System32/OpenSSH/:/mnt/c/Program Files/MongoDB/Server/4.4/bin:/mnt/c/Users/PHANTOM/AppData/Local/Android/Sdk/platform-tools:/mnt/c/Program Files/Git/cmd:/mnt/c/Program Files/ffmpeg:/mnt/c/Users/PHANTOM/AppData/Roaming/nvm:/mnt/c/Program Files/nodejs:/mnt/c/Users/PHANTOM/AppData/Local/Programs/Python/Python310/Scripts/:/mnt/c/Users/PHANTOM/AppData/Local/Programs/Python/Python310/:/mnt/c/Users/PHANTOM/AppData/Local/Microsoft/WindowsApps:/mnt/c/Users/PHANTOM/AppData/Local/Programs/Microsoft VS Code/bin:/mnt/c/Program Files/JetBrains/IntelliJ IDEA Community Edition 2021.1.1/bin:/mnt/c/Users/PHANTOM/AppData/Local/GitHubDesktop/bin:/mnt/c/users/phantom/appdata/roaming/python/python310/scripts:/mnt/c/users/phantom/.local/bin:/mnt/c/Program Files/heroku/bin:/mnt/c/Users/PHANTOM/AppData/Roaming/nvm:/mnt/c/Program Files/nodejs:/snap/bin
+
+Yarn version: 
+  1.22.19
+
+Node version: 
+  18.12.1
+
+Platform: 
+  linux x64
+
+Trace: 
+  Error: connect ENETUNREACH 104.16.17.35:443
+      at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1300:16)
+
+npm manifest: 
+  {
+    "name": "hardhat-fcc",
+    "version": "1.0.0",
+    "main": "index.js",
+    "license": "MIT"
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
