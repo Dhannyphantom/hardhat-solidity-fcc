@@ -10,6 +10,15 @@ async function main() {
     console.log("Contract Deployed!")
     console.log(`Contract Address: ${simpleStorage.address}`)
 
+    const currentNumber = await simpleStorage.retrieve()
+    console.log(`Current Number: ${currentNumber}`)
+
+    const txRes = await simpleStorage.store(20)
+    await txRes.wait(1)
+
+    const updatedNumber = await simpleStorage.retrieve()
+    console.log(`Updated Number: ${updatedNumber}`)
+
     if (network.config.chainId === 5 && process.env.ETHERSCAN_API_KEY) {
         try {
             await simpleStorage.deployTransaction.wait(6)
