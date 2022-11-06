@@ -14,7 +14,10 @@ const PRIVATE_KEY = process.env.PRIVATE_KEY ?? "0xkey"
 // const COINMARKET_API_KEY = process.env.COINMARKET_API_KEY ?? "key"
 
 module.exports = {
-    solidity: "0.8.17",
+    // solidity: "0.8.17",
+    solidity: {
+        compilers: [{ version: "0.8.17" }, { version: "0.6.6" }],
+    },
     defaultNetwork: "localhost",
     networks: {
         goerli: {
