@@ -11,18 +11,26 @@ contract FundMe {
     mapping(address => uint256) public addressToAmountFunded;
     address[] public funders;
 
+    modifier onlyOwner() {
+        require(msg.sender == owner, "Unauthorized request");
+        _;
+    }
+
     constructor(address priceFeedAddress) {
         owner = msg.sender;
         priceFeed = AggregatorV3Interface(priceFeedAddress);
     }
 
     function fund() public payable {
-        require(getConversionRate(msg.value) >= minimumUsd);
+        require(
+            getConversionRate(msg.value) >= minimumUsd,
+            "Minimum funding is 50USD"
+        );
         funders.push(msg.sender);
         addressToAmountFunded[msg.sender] = msg.value;
     }
 
-    function withdraw() public payable {
+    function withdraw() public payable onlyOwner {
         payable(owner).transfer(address(this).balance);
 
         // reset all variables
@@ -47,6 +55,6 @@ contract FundMe {
     }
 
     function retrieveBalance() public view returns (uint256) {
-        return owner.balance;
+        return address(this).balance;
     }
 }

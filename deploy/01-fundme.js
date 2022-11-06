@@ -1,4 +1,4 @@
-const { network } = require("hardhat")
+const { network, ethers } = require("hardhat")
 const { networkConfig, DEV_CHAINS } = require("../helper-hardhat-config")
 
 module.exports = async ({ getNamedAccounts, deployments }) => {
@@ -25,6 +25,27 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
     })
 
     log("Deployed sucessfully")
+
+    log("Funding contract!")
+    const fundMe = await ethers.getContract("FundMe", deployer)
+
+    const fund = "90000000000000000"
+
+    const fundUSD = (await fundMe.getConversionRate(fund)).toString()
+    log(`Fund -> USd:: ${fundUSD / 1e18}`)
+
+    const txRes = await fundMe.fund({ value: fund })
+    await txRes.wait(1)
+
+    const currentBalance = (await fundMe.retrieveBalance()).toString()
+    console.log(`Balance: ${currentBalance}`)
+
+    log("Withdrawing contract...")
+    const withdrawRes = await fundMe.withdraw()
+    await withdrawRes.wait(1)
+
+    const updatedBalance = (await fundMe.retrieveBalance()).toString()
+    console.log(`Balance: ${updatedBalance}`)
 
     log("--------------------------------------------------------")
 }

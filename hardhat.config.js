@@ -18,7 +18,7 @@ module.exports = {
     solidity: {
         compilers: [{ version: "0.8.17" }, { version: "0.6.6" }],
     },
-    defaultNetwork: "localhost",
+    defaultNetwork: "hardhat",
     networks: {
         goerli: {
             url: GOERLI_RPC_URL,
