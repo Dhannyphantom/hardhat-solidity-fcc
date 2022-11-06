@@ -1,5 +1,6 @@
 const { network, ethers } = require("hardhat")
 const { networkConfig, DEV_CHAINS } = require("../helper-hardhat-config")
+const verify = require("../utils/verify")
 
 module.exports = async ({ getNamedAccounts, deployments }) => {
     const { deploy, log } = deployments
@@ -18,34 +19,19 @@ module.exports = async ({ getNamedAccounts, deployments }) => {
         ethUsdPriceFeedAddress = networkConfig[chainId].ethUsdPriceFeedAddress
     }
 
-    await deploy("FundMe", {
+    const args = [ethUsdPriceFeedAddress]
+
+    const fundMe = await deploy("FundMe", {
         from: deployer,
-        args: [ethUsdPriceFeedAddress],
+        args,
         log: true,
     })
 
     log("Deployed sucessfully")
 
-    log("Funding contract!")
-    const fundMe = await ethers.getContract("FundMe", deployer)
-
-    const fund = "90000000000000000"
-
-    const fundUSD = (await fundMe.getConversionRate(fund)).toString()
-    log(`Fund -> USd:: ${fundUSD / 1e18}`)
-
-    const txRes = await fundMe.fund({ value: fund })
-    await txRes.wait(1)
-
-    const currentBalance = (await fundMe.retrieveBalance()).toString()
-    console.log(`Balance: ${currentBalance}`)
-
-    log("Withdrawing contract...")
-    const withdrawRes = await fundMe.withdraw()
-    await withdrawRes.wait(1)
-
-    const updatedBalance = (await fundMe.retrieveBalance()).toString()
-    console.log(`Balance: ${updatedBalance}`)
+    if (!DEV_CHAINS.includes(network.name)) {
+        await verify(fundMe.address, args)
+    }
 
     log("--------------------------------------------------------")
 }
