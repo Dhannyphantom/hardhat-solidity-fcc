@@ -4,6 +4,7 @@ require("@nomiclabs/hardhat-etherscan")
 require("./tasks/getAccounts")
 require("hardhat-gas-reporter")
 require("solidity-coverage")
+require("hardhat-deploy")
 
 /** @type import('hardhat/config').HardhatUserConfig */
 
@@ -14,7 +15,7 @@ const COINMARKET_API_KEY = process.env.COINMARKET_API_KEY ?? "key"
 
 module.exports = {
     solidity: "0.8.17",
-    defaultNetwork: "localhost",
+    defaultNetwork: "hardhat",
     networks: {
         goerli: {
             url: GOERLI_RPC_URL,
@@ -36,5 +37,13 @@ module.exports = {
         noColors: true,
         // coinmarketcap: COINMARKET_API_KEY,
         currency: "USD",
+    },
+    namedAccounts: {
+        deployer: {
+            default: 0,
+        },
+        personal: {
+            default: 1,
+        },
     },
 }
