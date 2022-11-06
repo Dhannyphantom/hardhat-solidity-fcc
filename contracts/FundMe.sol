@@ -26,8 +26,8 @@ contract FundMe {
             getConversionRate(msg.value) >= minimumUsd,
             "Minimum funding is 50USD"
         );
-        funders.push(msg.sender);
         addressToAmountFunded[msg.sender] = msg.value;
+        funders.push(msg.sender);
     }
 
     function withdraw() public payable onlyOwner {
