@@ -54,9 +54,43 @@ describe("FundMe", () => {
     })
 
     describe("withdraw", () => {
-        it("Should fail when called by other users apart from contract owner", async () => {
-            let personalFundMe = await ethers.getContract("FundMe", personal)
-            expect(await personalFundMe.withdraw()).to.be.reverted()
+        let personalFundMe
+        beforeEach(async () => {
+            personalFundMe = await ethers.getContract("FundMe", personal)
+            await fundMe.fund({ value: sendValue })
+        })
+
+        it("Should fail when called by other users apart from the founder", async () => {
+            await expect(personalFundMe.withdraw()).to.be.revertedWith(
+                "Unauthorized request"
+            )
+        })
+
+        it("Show withdraw all funds to contract owner", async () => {
+            const startingContractBalance = await fundMe.provider.getBalance(
+                fundMe.address
+            )
+            const startingDeployerBalance = await fundMe.provider.getBalance(
+                deployer
+            )
+
+            const withdrawTx = await fundMe.withdraw()
+            const { effectiveGasPrice, gasUsed } = await withdrawTx.wait(1)
+
+            const endingContractBalance = await fundMe.provider.getBalance(
+                fundMe.address
+            )
+            const endingDeployerBalance = await fundMe.provider.getBalance(
+                deployer
+            )
+
+            const gasCost = effectiveGasPrice.mul(gasUsed)
+
+            assert.equal(endingContractBalance, 0)
+            assert.equal(
+                endingDeployerBalance.add(gasCost).toString(),
+                startingDeployerBalance.add(startingContractBalance).toString()
+            )
         })
     })
 })
