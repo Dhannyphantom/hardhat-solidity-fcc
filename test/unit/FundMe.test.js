@@ -4,12 +4,10 @@ const { deployments, getNamedAccounts, ethers } = require("hardhat")
 describe("FundMe", () => {
     let fundMe,
         deployer,
-        personal,
         mockV3Aggregator,
         sendValue = ethers.utils.parseEther("1")
     beforeEach(async () => {
         deployer = (await getNamedAccounts()).deployer
-        personal = (await getNamedAccounts()).personal
         await deployments.fixture(["all"])
         fundMe = await ethers.getContract("FundMe", deployer)
         mockV3Aggregator = await ethers.getContract(
@@ -54,19 +52,19 @@ describe("FundMe", () => {
     })
 
     describe("withdraw", () => {
-        let personalFundMe
         beforeEach(async () => {
-            personalFundMe = await ethers.getContract("FundMe", personal)
             await fundMe.fund({ value: sendValue })
         })
 
         it("Should fail when called by other users apart from the founder", async () => {
-            await expect(personalFundMe.withdraw()).to.be.revertedWith(
-                "Unauthorized request"
-            )
+            const accounts = await ethers.getSigners()
+            const attackerFundMe = await fundMe.connect(accounts[1])
+            await expect(
+                attackerFundMe.withdraw()
+            ).to.be.revertedWithCustomError(fundMe, "FundMe__NotOwner")
         })
 
-        it("Show withdraw all funds to contract owner", async () => {
+        it("Should withdraw a single funder's funds to contract owner", async () => {
             const startingContractBalance = await fundMe.provider.getBalance(
                 fundMe.address
             )
@@ -91,6 +89,51 @@ describe("FundMe", () => {
                 endingDeployerBalance.add(gasCost).toString(),
                 startingDeployerBalance.add(startingContractBalance).toString()
             )
+            // making sure the variables are set to default or empty;
+            await expect(fundMe.funders(0)).to.be.reverted
+        })
+
+        it("Should withdraw multiple funder's funds to contract owner", async () => {
+            const accounts = await ethers.getSigners()
+
+            for (let i = 1; i < 6; i++) {
+                const account = accounts[i]
+                const othersFundMe = await fundMe.connect(account)
+
+                await othersFundMe.fund({ value: sendValue })
+            }
+
+            const startingContractBalance = await fundMe.provider.getBalance(
+                fundMe.address
+            )
+            const startingDeployerBalance = await fundMe.provider.getBalance(
+                deployer
+            )
+
+            const withdrawTx = await fundMe.withdraw()
+            const { effectiveGasPrice, gasUsed } = await withdrawTx.wait(1)
+
+            const endingContractBalance = await fundMe.provider.getBalance(
+                fundMe.address
+            )
+            const endingDeployerBalance = await fundMe.provider.getBalance(
+                deployer
+            )
+
+            const gasCost = effectiveGasPrice.mul(gasUsed)
+
+            assert.equal(endingContractBalance, 0)
+            assert.equal(
+                endingDeployerBalance.add(gasCost).toString(),
+                startingDeployerBalance.add(startingContractBalance).toString()
+            )
+            // making sure the variables are set to default or empty;
+            await expect(fundMe.funders(0)).to.be.reverted
+            for (let i = 1; i < 6; i++) {
+                const account = accounts[i]
+                const fund = await fundMe.addressToAmountFunded(account.address)
+                assert.equal(fund, 0)
+            }
         })
     })
 })

@@ -3,6 +3,8 @@ pragma solidity ^0.8.0;
 
 import "@chainlink/contracts/src/v0.8/interfaces/AggregatorV3Interface.sol";
 
+error FundMe__NotOwner();
+
 contract FundMe {
     address public immutable owner;
     uint256 constant minimumUsd = 50 * 1e18;
@@ -12,7 +14,7 @@ contract FundMe {
     address[] public funders;
 
     modifier onlyOwner() {
-        require(msg.sender == owner, "Unauthorized request");
+        if (msg.sender != owner) revert FundMe__NotOwner();
         _;
     }
 
