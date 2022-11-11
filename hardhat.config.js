@@ -11,7 +11,7 @@ require("hardhat-deploy")
 const ETHERSCAN_API_KEY = process.env.ETHERSCAN_API_KEY ?? "key"
 const GOERLI_RPC_URL = process.env.GOERLI_RPC_URL ?? "http://eth-goerli"
 const PRIVATE_KEY = process.env.PRIVATE_KEY ?? "0xkey"
-// const COINMARKET_API_KEY = process.env.COINMARKET_API_KEY ?? "key"
+const COINMARKET_API_KEY = process.env.COINMARKET_API_KEY ?? "key"
 
 module.exports = {
     // solidity: "0.8.17",
@@ -39,8 +39,9 @@ module.exports = {
         enabled: true,
         outputFile: "artifacts/gas-report.txt",
         noColors: true,
-        // coinmarketcap: COINMARKET_API_KEY,
+        coinmarketcap: COINMARKET_API_KEY,
         currency: "USD",
+        token: "ETH",
     },
     namedAccounts: {
         deployer: {

@@ -19,7 +19,7 @@ describe("FundMe", () => {
     describe("contructor", () => {
         it("sets priceFeed to the correct Aggregator price data feed", async () => {
             const expected = mockV3Aggregator.address
-            const value = await fundMe.priceFeed()
+            const value = await fundMe.getPriceFeed()
 
             assert.equal(expected, value)
         })
@@ -27,8 +27,9 @@ describe("FundMe", () => {
 
     describe("fund", () => {
         it("Fails if you don't spend enough ETH", async () => {
-            await expect(fundMe.fund()).to.be.revertedWith(
-                "Minimum funding is 50USD"
+            await expect(fundMe.fund()).to.be.revertedWithCustomError(
+                fundMe,
+                "FundMe__LowETH"
             )
         })
 
@@ -36,7 +37,7 @@ describe("FundMe", () => {
             const txRes = await fundMe.fund({ value: sendValue })
             await txRes.wait(1)
 
-            const expected = await fundMe.addressToAmountFunded(deployer)
+            const expected = await fundMe.getAddressToAmountFunded(deployer)
 
             assert.equal(sendValue.toString(), expected.toString())
         })
@@ -45,7 +46,7 @@ describe("FundMe", () => {
             const txRes = await fundMe.fund({ value: sendValue })
             await txRes.wait(1)
 
-            const expected = await fundMe.funders(0)
+            const expected = await fundMe.getFunder(0)
 
             assert.equal(expected, deployer)
         })
@@ -90,7 +91,7 @@ describe("FundMe", () => {
                 startingDeployerBalance.add(startingContractBalance).toString()
             )
             // making sure the variables are set to default or empty;
-            await expect(fundMe.funders(0)).to.be.reverted
+            await expect(fundMe.getFunder(0)).to.be.reverted
         })
 
         it("Should withdraw multiple funder's funds to contract owner", async () => {
@@ -128,10 +129,12 @@ describe("FundMe", () => {
                 startingDeployerBalance.add(startingContractBalance).toString()
             )
             // making sure the variables are set to default or empty;
-            await expect(fundMe.funders(0)).to.be.reverted
+            await expect(fundMe.getFunder(0)).to.be.reverted
             for (let i = 1; i < 6; i++) {
                 const account = accounts[i]
-                const fund = await fundMe.addressToAmountFunded(account.address)
+                const fund = await fundMe.getAddressToAmountFunded(
+                    account.address
+                )
                 assert.equal(fund, 0)
             }
         })
