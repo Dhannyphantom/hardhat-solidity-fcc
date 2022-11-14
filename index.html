@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Fund Me App</title>
+  </head>
+  <body>
+    <h1>METAMASK</h1>
+
+    <script>
+      async function connect() {
+        if (typeof window.ethereum !== "undefined") {
+          await window.ethereum.request({ method: "eth_requestAccounts" });
+          console.log("Connected");
+          const btn = document.querySelector("#connectBtn");
+          btn.innerHTML = "Connected";
+        } else {
+          alert("Please install metamask");
+        }
+      }
+    </script>
+    <button id="connectBtn" onclick="connect()">Connect</button>
+  </body>
+</html>
